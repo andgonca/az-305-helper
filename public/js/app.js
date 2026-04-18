@@ -176,17 +176,25 @@ class AZ305App {
         }
 
         try {
+            const requestBody = {
+                question_count: questionCount,
+                domains: selectedDomains.length > 0 ? selectedDomains : null
+            };
+            
+            console.log('Creating session with:', requestBody);
+            
             const response = await fetch(`${this.apiBase}/session/create`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    question_count: questionCount,
-                    domains: selectedDomains.length > 0 ? selectedDomains : null
-                })
+                body: JSON.stringify(requestBody)
             });
 
+            console.log('Session response status:', response.status);
+            
             if (!response.ok) {
-                throw new Error(`API error: ${response.status}`);
+                const errorData = await response.json();
+                console.error('Session API error:', errorData);
+                throw new Error(`API error: ${response.status} - ${errorData.error || 'Unknown error'}`);
             }
 
             const session = await response.json();

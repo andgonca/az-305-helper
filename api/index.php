@@ -161,20 +161,32 @@ function handleSessionRequest($method, $action, $param) {
                     return;
                 }
                 
-                $data = json_decode(file_get_contents('php://input'), true);
-                $session_id = $sm->createSession(
-                    $data['question_count'] ?? 10,
-                    $data['domains'] ?? null
-                );
-                
-                // Get the full session object
-                $session = $sm->getSession($session_id);
-                if (!$session) {
+                try {
+                    $data = json_decode(file_get_contents('php://input'), true);
+                    
+                    if (!isset($data['question_count'])) {
+                        http_response_code(400);
+                        echo json_encode(['error' => 'Missing question_count parameter']);
+                        return;
+                    }
+                    
+                    $session_id = $sm->createSession(
+                        $data['question_count'] ?? 10,
+                        $data['domains'] ?? null
+                    );
+                    
+                    // Get the full session object
+                    $session = $sm->getSession($session_id);
+                    if (!$session) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Failed to retrieve session after creation']);
+                        return;
+                    }
+                    echo json_encode($session);
+                } catch (Exception $e) {
                     http_response_code(500);
-                    echo json_encode(['error' => 'Failed to retrieve session after creation']);
-                    return;
+                    echo json_encode(['error' => 'Session creation error: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                 }
-                echo json_encode($session);
                 break;
         
         case 'get':
