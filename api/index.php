@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once __DIR__ . '/src/QuestionManager.php';
-require_once __DIR__ . '/src/SessionManager.php';
+require_once __DIR__ . '/../src/QuestionManager.php';
+require_once __DIR__ . '/../src/SessionManager.php';
 
 // Parse the request
 $request_method = $_SERVER['REQUEST_METHOD'];
@@ -63,9 +63,21 @@ function handleDomainsRequest($method) {
         return;
     }
     
-    $qm = new QuestionManager();
-    $domains = $qm->getDomains();
-    echo json_encode($domains);
+    try {
+        $qm = new QuestionManager();
+        $domains = $qm->getDomains();
+        
+        if (empty($domains)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'No domains found in questions data']);
+            return;
+        }
+        
+        echo json_encode($domains);
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Failed to load domains: ' . $e->getMessage()]);
+    }
 }
 
 function handleQuestionsRequest($method, $action, $param) {
@@ -100,23 +112,32 @@ function handleQuestionsRequest($method, $action, $param) {
 }
 
 function handleSessionRequest($method, $action, $param) {
-    $sm = new SessionManager();
-    
-    switch ($action) {
-        case 'create':
-            if ($method !== 'POST') {
-                http_response_code(405);
-                echo json_encode(['error' => 'Method not allowed']);
-                return;
-            }
-            
-            $data = json_decode(file_get_contents('php://input'), true);
-            $session = $sm->createSession(
-                $data['question_count'] ?? 10,
-                $data['domains'] ?? null
-            );
-            echo json_encode($session);
-            break;
+    try {
+        $sm = new SessionManager();
+        
+        switch ($action) {
+            case 'create':
+                if ($method !== 'POST') {
+                    http_response_code(405);
+                    echo json_encode(['error' => 'Method not allowed']);
+                    return;
+                }
+                
+                $data = json_decode(file_get_contents('php://input'), true);
+                $session_id = $sm->createSession(
+                    $data['question_count'] ?? 10,
+                    $data['domains'] ?? null
+                );
+                
+                // Get the full session object
+                $session = $sm->getSession($session_id);
+                if (!$session) {
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Failed to retrieve session after creation']);
+                    return;
+                }
+                echo json_encode($session);
+                break;
         
         case 'get':
             if ($method !== 'GET') {
@@ -153,6 +174,10 @@ function handleSessionRequest($method, $action, $param) {
             http_response_code(404);
             echo json_encode(['error' => 'Action not found']);
             break;
+    }
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode(['error' => 'Session error: ' . $e->getMessage()]);
     }
 }
 ?>
