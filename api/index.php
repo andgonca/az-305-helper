@@ -31,6 +31,19 @@ $endpoint = $path_parts[0] ?? null;
 $action = $path_parts[1] ?? null;
 $param = $path_parts[2] ?? null;
 
+// Debug endpoint
+if ($endpoint === 'debug') {
+    echo json_encode([
+        'cwd' => getcwd(),
+        'script_dir' => __DIR__,
+        'questions_file' => __DIR__ . '/../data/questions.json',
+        'questions_file_exists' => file_exists(__DIR__ . '/../data/questions.json'),
+        'src_dir' => __DIR__ . '/../src',
+        'src_exists' => is_dir(__DIR__ . '/../src')
+    ]);
+    exit;
+}
+
 try {
     // Route the request
     switch ($endpoint) {
@@ -53,7 +66,8 @@ try {
     }
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage()]);
+    error_log('API Error: ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+    echo json_encode(['error' => 'Server error: ' . $e->getMessage()]);
 }
 
 function handleDomainsRequest($method) {
@@ -67,16 +81,29 @@ function handleDomainsRequest($method) {
         $qm = new QuestionManager();
         $domains = $qm->getDomains();
         
+        if ($domains === null) {
+            http_response_code(500);
+            echo json_encode(['error' => 'getDomains() returned null']);
+            return;
+        }
+        
         if (empty($domains)) {
             http_response_code(500);
             echo json_encode(['error' => 'No domains found in questions data']);
             return;
         }
         
+        // Ensure we're returning an array
+        if (!is_array($domains)) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Domains is not an array: ' . gettype($domains)]);
+            return;
+        }
+        
         echo json_encode($domains);
     } catch (Exception $e) {
         http_response_code(500);
-        echo json_encode(['error' => 'Failed to load domains: ' . $e->getMessage()]);
+        echo json_encode(['error' => 'Failed to load domains: ' . $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine()]);
     }
 }
 

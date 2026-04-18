@@ -17,6 +17,17 @@ class AZ305App {
 
     async init() {
         this.setupEventListeners();
+        
+        // Test API connectivity first
+        console.log('Testing API connectivity...');
+        try {
+            const debugResponse = await fetch(`${this.apiBase}/debug`);
+            const debugData = await debugResponse.json();
+            console.log('API Debug Info:', debugData);
+        } catch (e) {
+            console.error('Debug endpoint error:', e);
+        }
+        
         await this.loadDomains();
         this.renderDomainsList();
     }
@@ -81,12 +92,22 @@ class AZ305App {
 
     async loadDomains() {
         try {
+            console.log('Fetching domains from:', `${this.apiBase}/domains`);
             const response = await fetch(`${this.apiBase}/domains`);
+            
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
             if (!response.ok) {
+                const errorData = await response.text();
+                console.error('API response:', errorData);
                 throw new Error(`API error: ${response.status}`);
             }
+            
             this.domains = await response.json();
             console.log('Domains loaded:', this.domains);
+            console.log('Domains type:', typeof this.domains);
+            console.log('Domains is array:', Array.isArray(this.domains));
             
             // Ensure domains is an array
             if (!Array.isArray(this.domains)) {
@@ -104,8 +125,9 @@ class AZ305App {
         domainsList.innerHTML = '';
 
         if (!this.domains || this.domains.length === 0) {
-            domainsList.innerHTML = '<p style="color: #da3b01;">Error: Unable to load domains. Please refresh the page.</p>';
-            console.warn('Domains array is empty or undefined');
+            const errorMsg = 'Error: Unable to load domains. Please refresh the page.';
+            domainsList.innerHTML = `<p style="color: #da3b01;">${errorMsg}</p>`;
+            console.warn('Domains array is empty or undefined. Domains:', this.domains);
             return;
         }
 
