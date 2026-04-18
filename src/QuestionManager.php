@@ -55,7 +55,7 @@ class QuestionManager {
         $available_domains = $this->questions_data['domains'] ?? [];
         
         // Filter questions by domain if specified
-        if ($domains && is_array($domains)) {
+        if ($domains && is_array($domains) && count($domains) > 0) {
             $all_questions = array_filter($all_questions, function($q) use ($domains) {
                 return in_array($q['domain'], $domains);
             });
@@ -65,10 +65,30 @@ class QuestionManager {
             throw new Exception('No questions available for selected domains');
         }
         
-        // Build domain distribution map
+        // Build domain distribution map - only include domains that have questions
         $domain_dist = [];
+        $selected_domain_ids = $domains && is_array($domains) ? $domains : null;
+        
         foreach ($available_domains as $domain) {
-            $domain_dist[$domain['id']] = $domain['percentage'];
+            // Skip domains not selected by user
+            if ($selected_domain_ids && !in_array($domain['id'], $selected_domain_ids)) {
+                continue;
+            }
+            // Only include domains that have questions
+            $domain_has_questions = count(array_filter($all_questions, function($q) use ($domain) {
+                return $q['domain'] === $domain['id'];
+            })) > 0;
+            
+            if ($domain_has_questions) {
+                $domain_dist[$domain['id']] = $domain['percentage'];
+            }
+        }
+        
+        // If no valid domains with questions, use all available
+        if (empty($domain_dist)) {
+            foreach ($available_domains as $domain) {
+                $domain_dist[$domain['id']] = $domain['percentage'];
+            }
         }
         
         // Allocate questions by domain percentage
@@ -102,14 +122,23 @@ class QuestionManager {
             
             $domain_questions = array_values($domain_questions);
             
-            // Randomly select required number of questions
-            $keys = array_rand($domain_questions, min($needed, count($domain_questions)));
-            if (!is_array($keys)) {
-                $keys = [$keys];
+            // Skip if no questions in this domain
+            if (empty($domain_questions)) {
+                continue;
             }
             
-            foreach ($keys as $key) {
+            // Randomly select required number of questions (handle case where needed > available)
+            $select_count = min($needed, count($domain_questions));
+            
+            if ($select_count == 1) {
+                // array_rand with 1 element returns a single key, not array
+                $key = array_rand($domain_questions);
                 $selected[] = $this->formatQuestionForDisplay($domain_questions[$key]);
+            } else {
+                $keys = array_rand($domain_questions, $select_count);
+                foreach ($keys as $key) {
+                    $selected[] = $this->formatQuestionForDisplay($domain_questions[$key]);
+                }
             }
         }
         
