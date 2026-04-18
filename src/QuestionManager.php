@@ -96,7 +96,8 @@ class QuestionManager {
         $remaining = $count;
         
         foreach ($domain_dist as $domain_id => $percentage) {
-            $domain_count = max(1, round($count * ($percentage / 100)));
+            // Calculate based on percentage, but don't force minimum of 1
+            $domain_count = round($count * ($percentage / 100));
             $allocated[$domain_id] = min($domain_count, $remaining);
             $remaining -= $allocated[$domain_id];
         }
@@ -106,7 +107,7 @@ class QuestionManager {
             arsort($domain_dist);
             foreach ($domain_dist as $domain_id => $percentage) {
                 if ($remaining <= 0) break;
-                if (isset($allocated[$domain_id])) {
+                if (isset($allocated[$domain_id]) && $allocated[$domain_id] > 0) {
                     $allocated[$domain_id]++;
                     $remaining--;
                 }
@@ -116,6 +117,11 @@ class QuestionManager {
         // Select random questions from each domain
         $selected = [];
         foreach ($allocated as $domain_id => $needed) {
+            // Skip domains with 0 allocated or no questions
+            if ($needed <= 0) {
+                continue;
+            }
+            
             $domain_questions = array_filter($all_questions, function($q) use ($domain_id) {
                 return $q['domain'] === $domain_id;
             });
