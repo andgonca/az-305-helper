@@ -47,7 +47,7 @@ class SessionManager {
         // Save session
         $this->saveSession($session);
         
-        return $session_id;
+        return $session;
     }
     
     /**

@@ -17,6 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../src/QuestionManager.php';
 require_once __DIR__ . '/../src/SessionManager.php';
 
+// Set error reporting to show all errors
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Log all errors to a file
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/../data/php-errors.log');
+
 // Parse the request
 $request_method = $_SERVER['REQUEST_METHOD'];
 $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -170,22 +179,34 @@ function handleSessionRequest($method, $action, $param) {
                         return;
                     }
                     
-                    $session_id = $sm->createSession(
-                        $data['question_count'] ?? 10,
-                        $data['domains'] ?? null
-                    );
+                    error_log('Creating session with: ' . json_encode($data));
                     
-                    // Get the full session object
-                    $session = $sm->getSession($session_id);
-                    if (!$session) {
+                    $question_count = intval($data['question_count']);
+                    $domains = $data['domains'] ?? null;
+                    
+                    error_log('Calling createSession with count=' . $question_count . ', domains=' . json_encode($domains));
+                    
+                    // createSession now returns the full session object
+                    $session = $sm->createSession($question_count, $domains);
+                    
+                    error_log('Session created: ' . json_encode($session));
+                    
+                    if (!$session || !isset($session['id'])) {
                         http_response_code(500);
-                        echo json_encode(['error' => 'Failed to retrieve session after creation']);
+                        echo json_encode(['error' => 'Failed to create valid session']);
                         return;
                     }
+                    
                     echo json_encode($session);
                 } catch (Exception $e) {
                     http_response_code(500);
-                    echo json_encode(['error' => 'Session creation error: ' . $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+                    error_log('Session creation error: ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
+                    error_log('Stack trace: ' . $e->getTraceAsString());
+                    echo json_encode([
+                        'error' => 'Session creation error: ' . $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]);
                 }
                 break;
         
