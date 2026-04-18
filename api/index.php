@@ -111,11 +111,11 @@ function handleSessionRequest($method, $action, $param) {
             }
             
             $data = json_decode(file_get_contents('php://input'), true);
-            $session_id = $sm->createSession(
+            $session = $sm->createSession(
                 $data['question_count'] ?? 10,
                 $data['domains'] ?? null
             );
-            echo json_encode(['session_id' => $session_id]);
+            echo json_encode($session);
             break;
         
         case 'get':

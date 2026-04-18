@@ -82,15 +82,32 @@ class AZ305App {
     async loadDomains() {
         try {
             const response = await fetch(`${this.apiBase}/domains`);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
             this.domains = await response.json();
+            console.log('Domains loaded:', this.domains);
+            
+            // Ensure domains is an array
+            if (!Array.isArray(this.domains)) {
+                console.error('Domains response is not an array:', this.domains);
+                this.domains = [];
+            }
         } catch (error) {
             console.error('Error loading domains:', error);
+            this.domains = [];
         }
     }
 
     renderDomainsList() {
         const domainsList = document.getElementById('domains-list');
         domainsList.innerHTML = '';
+
+        if (!this.domains || this.domains.length === 0) {
+            domainsList.innerHTML = '<p style="color: #da3b01;">Error: Unable to load domains. Please refresh the page.</p>';
+            console.warn('Domains array is empty or undefined');
+            return;
+        }
 
         this.domains.forEach(domain => {
             const card = document.createElement('div');
@@ -107,6 +124,12 @@ class AZ305App {
     renderDomainsCheckboxes() {
         const container = document.getElementById('domains-checkboxes');
         container.innerHTML = '';
+
+        if (!this.domains || this.domains.length === 0) {
+            container.innerHTML = '<p style="color: #da3b01;">Error: Unable to load domains. Please refresh the page.</p>';
+            console.warn('Domains array is empty or undefined');
+            return;
+        }
 
         this.domains.forEach(domain => {
             const item = document.createElement('div');
@@ -140,18 +163,26 @@ class AZ305App {
                 })
             });
 
-            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
+
+            const session = await response.json();
+            console.log('Session created:', session);
             
-            if (data.session_id) {
-                await this.loadSession(data.session_id);
+            if (session && session.id) {
+                this.currentSession = session;
+                this.currentQuestionIndex = 0;
+                this.sessionAnswers = new Array(session.questions.length).fill(null);
                 this.startTime = Date.now();
                 this.showView('quiz');
+                this.displayQuestion();
             } else {
-                alert('Error creating session');
+                alert('Error creating session: Invalid response');
             }
         } catch (error) {
             console.error('Error creating session:', error);
-            alert('Error creating session');
+            alert('Error creating session: ' + error.message);
         }
     }
 
