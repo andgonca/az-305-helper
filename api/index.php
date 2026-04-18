@@ -22,8 +22,13 @@ $request_method = $_SERVER['REQUEST_METHOD'];
 $request_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $path_parts = explode('/', trim($request_path, '/'));
 
-// Remove base path if present
+// Remove base path if present (api)
 if (count($path_parts) > 0 && $path_parts[0] === 'api') {
+    array_shift($path_parts);
+}
+
+// Remove index.php if present (direct access)
+if (count($path_parts) > 0 && $path_parts[0] === 'index.php') {
     array_shift($path_parts);
 }
 
@@ -31,9 +36,15 @@ $endpoint = $path_parts[0] ?? null;
 $action = $path_parts[1] ?? null;
 $param = $path_parts[2] ?? null;
 
-// Debug endpoint
+// Debug endpoint - show what we're parsing
 if ($endpoint === 'debug') {
     echo json_encode([
+        'request_uri' => $_SERVER['REQUEST_URI'],
+        'request_path' => $request_path,
+        'path_parts' => $path_parts,
+        'endpoint' => $endpoint,
+        'action' => $action,
+        'param' => $param,
         'cwd' => getcwd(),
         'script_dir' => __DIR__,
         'questions_file' => __DIR__ . '/../data/questions.json',

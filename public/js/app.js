@@ -4,7 +4,7 @@
 
 class AZ305App {
     constructor() {
-        this.apiBase = '/api';
+        this.apiBase = '/api/index.php';
         this.currentView = 'home';
         this.domains = [];
         this.currentSession = null;
