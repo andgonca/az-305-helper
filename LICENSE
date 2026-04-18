@@ -1,0 +1,54 @@
+MIT License
+
+Copyright (c) 2026 AZ-305 Helper
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DISCLAIMER:
+
+This application is designed to help certification candidates prepare for the
+Microsoft Azure Administrator Expert (AZ-305) examination. It is not affiliated
+with, endorsed by, or created by Microsoft Corporation.
+
+The questions, explanations, and references in this application are created
+based on official Microsoft documentation and best practices but are not
+official exam content. For official exam information and resources, please
+visit:
+
+https://learn.microsoft.com/en-us/certifications/exams/az-305/
+
+Users are responsible for verifying the accuracy of all information and
+ensuring compliance with Microsoft's exam policies and guidelines.
+
+The authors and contributors are not responsible for any inaccuracies,
+omissions, or consequences resulting from the use of this application.
+
+---
+
+THIRD-PARTY ATTRIBUTIONS:
+
+This project includes or references:
+- Microsoft Learn documentation
+- Azure official resources
+- Open-source frameworks and libraries
+
+All references to Microsoft, Azure, and related products are trademarks of
+Microsoft Corporation.

@@ -1,0 +1,59 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# PHP
+.env
+.env.local
+.env.*.local
+composer.lock
+
+# Logs
+*.log
+logs/
+
+# Session files (keep the directory, not the files)
+data/sessions/*
+!data/sessions/.gitkeep
+
+# Build and distribution
+dist/
+build/
+*.zip
+*.tar.gz
+
+# Azure
+.azure/
+.env.azure
+
+# Development
+node_modules/
+.npm/
+vendor/
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Cache
+.cache/
+*.cache
+
+# Temporary files
+tmp/
+temp/
+*.temp
+
+# Database backups
+*.backup
+*.bak
+
+# System files
+desktop.ini
+ehthumbs.db

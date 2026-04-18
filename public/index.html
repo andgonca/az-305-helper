@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZ-305 Certification Helper</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app" class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <h1>AZ-305 Certification Helper</h1>
+                <p>Master the Azure Architecture Solutions exam</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <ul class="nav-list">
+                    <li><a href="#" class="nav-link active" data-view="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-view="about">About</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Home View -->
+                <div id="home-view" class="view active">
+                    <div class="welcome-section">
+                        <h2>Welcome to AZ-305 Helper</h2>
+                        <p>Prepare for the Microsoft Azure Administrator Expert exam with challenging questions designed to test your knowledge of Azure architecture solutions.</p>
+                        
+                        <button class="btn btn-primary btn-large" id="start-session-btn">Start New Session</button>
+                    </div>
+
+                    <div class="stats-section">
+                        <h3>Domains Covered</h3>
+                        <div id="domains-list" class="domains-list"></div>
+                    </div>
+                </div>
+
+                <!-- Session Setup View -->
+                <div id="setup-view" class="view">
+                    <div class="setup-form">
+                        <h2>Create a New Session</h2>
+                        
+                        <div class="form-group">
+                            <label for="question-count">Number of Questions:</label>
+                            <input type="number" id="question-count" min="5" max="50" value="10">
+                            <small>Choose between 5 and 50 questions</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Select Domains (leave empty for all):</label>
+                            <div id="domains-checkboxes" class="domains-checkboxes"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="create-session-btn">Create Session</button>
+                            <button class="btn btn-secondary" id="back-home-btn">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz View -->
+                <div id="quiz-view" class="view">
+                    <div class="quiz-container">
+                        <div class="quiz-header">
+                            <div class="progress-bar">
+                                <div id="progress-fill" class="progress-fill"></div>
+                            </div>
+                            <div class="quiz-info">
+                                <span id="question-counter"></span>
+                                <span id="session-timer"></span>
+                            </div>
+                        </div>
+
+                        <div class="quiz-content">
+                            <div id="question-container" class="question-container">
+                                <div class="domain-badge" id="domain-badge"></div>
+                                <h3 id="question-text"></h3>
+                                <div id="alternatives-container" class="alternatives-container"></div>
+                            </div>
+                        </div>
+
+                        <div class="quiz-actions">
+                            <button class="btn btn-secondary" id="prev-question-btn">Previous</button>
+                            <button class="btn btn-primary" id="next-question-btn">Next</button>
+                            <button class="btn btn-success" id="submit-session-btn" style="display:none;">Submit Session</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results View -->
+                <div id="results-view" class="view">
+                    <div class="results-container">
+                        <h2>Session Results</h2>
+                        
+                        <div class="score-section">
+                            <div class="score-card">
+                                <h3>Overall Score</h3>
+                                <div class="score-display">
+                                    <span id="overall-percentage" class="percentage"></span>
+                                    <span id="overall-grade" class="grade"></span>
+                                </div>
+                                <p id="score-summary"></p>
+                            </div>
+                        </div>
+
+                        <div class="domain-results">
+                            <h3>Performance by Domain</h3>
+                            <div id="domain-results-list" class="domain-results-list"></div>
+                        </div>
+
+                        <div class="detailed-results">
+                            <h3>Detailed Review</h3>
+                            <div id="detailed-list" class="detailed-list"></div>
+                        </div>
+
+                        <div class="results-actions">
+                            <button class="btn btn-primary" id="new-session-btn">Start New Session</button>
+                            <button class="btn btn-secondary" id="home-btn">Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About View -->
+                <div id="about-view" class="view">
+                    <div class="about-section">
+                        <h2>About AZ-305 Helper</h2>
+                        <p>This tool is designed to help certification candidates prepare for the AZ-305: Designing Microsoft Azure Infrastructure Solutions exam.</p>
+                        
+                        <h3>Features</h3>
+                        <ul>
+                            <li>Challenging multiple-choice questions distributed by exam domain</li>
+                            <li>Customizable session length and domain selection</li>
+                            <li>Detailed feedback with explanations and references</li>
+                            <li>Performance tracking by domain</li>
+                            <li>Links to Microsoft Learn documentation</li>
+                        </ul>
+
+                        <h3>Exam Domains</h3>
+                        <ul>
+                            <li>Design identity and governance solutions (27.5%)</li>
+                            <li>Design network solutions (27.5%)</li>
+                            <li>Design compute solutions (22.5%)</li>
+                            <li>Design data storage solutions (17.5%)</li>
+                            <li>Design business continuity solutions (5%)</li>
+                        </ul>
+
+                        <p><strong>Disclaimer:</strong> This tool is for educational purposes and is not affiliated with Microsoft. For official exam information, visit the Microsoft Learn documentation.</p>
+
+                        <button class="btn btn-secondary" id="about-back-btn">Back to Home</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2026 AZ-305 Helper. Created for certification candidates.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

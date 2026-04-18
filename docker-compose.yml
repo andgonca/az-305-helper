@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: az305-helper
+    ports:
+      - "8000:80"
+    environment:
+      - APP_ENV=development
+      - PHP_VERSION=8.2
+    volumes:
+      - ./public:/var/www/html:rw
+      - ./api:/var/www/html/api:rw
+      - ./src:/var/www/html/src:rw
+      - ./data:/var/www/html/data:rw
+      - ./config.php:/var/www/html/config.php:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/api/domains"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  app-data:
+    driver: local
