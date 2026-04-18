@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once __DIR__ . '/src/QuestionManager.php';
-require_once __DIR__ . '/src/SessionManager.php';
+require_once __DIR__ . '/../src/QuestionManager.php';
+require_once __DIR__ . '/../src/SessionManager.php';
 
 // Parse the request
 $request_method = $_SERVER['REQUEST_METHOD'];
@@ -38,8 +38,8 @@ if ($endpoint === 'debug') {
         'script_dir' => __DIR__,
         'questions_file' => __DIR__ . '/../data/questions.json',
         'questions_file_exists' => file_exists(__DIR__ . '/../data/questions.json'),
-        'src_dir' => __DIR__ . '/src',
-        'src_exists' => is_dir(__DIR__ . '/src')
+        'src_dir' => __DIR__ . '/../src',
+        'src_exists' => is_dir(__DIR__ . '/../src')
     ]);
     exit;
 }
